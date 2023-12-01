@@ -40,8 +40,7 @@ var globalCheck:UICheckbox;
 var cameraOffsetText:UIText;
 
 function create() {
-	FlxG.mouse.enabled = true;
-	FlxG.mouse.visible = true;
+	FlxG.mouse.visible = FlxG.mouse.enabled = true;
 
 	if (Script.staticVariables.get('characterToEdit') == null)
 		Script.staticVariables.set('characterToEdit', 'bf');
