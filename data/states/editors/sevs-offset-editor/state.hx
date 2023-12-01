@@ -14,7 +14,7 @@ import funkin.editors.ui.UICheckbox;
 import funkin.editors.ui.UIText;
 import funkin.editors.character.CharacterAnimButtons;
 import openfl.net.FileReference;
-import haxe.ds.StringMap;
+import Xml;
 
 // VARIABLES
 var character:Character;
@@ -251,14 +251,51 @@ function open() {
 	stupidAssFuckinShit.browse();
 }
 
-function save() {
-	if (character.isPlayer) character.flipX = !character.flipX;
+function generateXML() {
+	var finalXML:Xml = Xml.createElement('character');
 
-	var finalString:String = StringTools.replace(character.buildXML(animList).toString(), '><', '>\n<');
+	finalXML.set("isPlayer", Std.string(character.isPlayer));
+	finalXML.set("flipX", Std.string(character.flipX));
+	finalXML.set("holdTime", Std.string(character.holdTime));
+
+	if (character.isGF) finalXML.set("isGF", 'true');
+	if (character.globalOffset.x != 0) finalXML.set("x", Std.string(character.globalOffset.x));
+	if (character.globalOffset.y != 0) finalXML.set("y", Std.string(character.globalOffset.y));
+	if (character.gameOverCharacter != 'bf-dead') finalXML.set("gameOverChar", character.gameOverCharacter);
+	if (character.cameraOffset.x != 0) finalXML.set("camx", Std.string(character.cameraOffset.x));
+	if (character.cameraOffset.y != 0) finalXML.set("camy", Std.string(character.cameraOffset.y));
+	if (character.scale.x != 1) finalXML.set("scale", Std.string(character.scale.x));
+	if (!character.antialiasing) finalXML.set("antialiasing", 'false');
+	if (character.sprite != character.curCharacter) finalXML.set("sprite", character.sprite);
+	
+	if (character.getIcon() != character.curCharacter) finalXML.set("icon", character.getIcon());
+	if (character.iconColor != null) {
+		var colorString:String = '#' + StringTools.hex((character.iconColor >> 16) & 0xff, 2) + StringTools.hex((character.iconColor >> 8) & 0xff, 2) + StringTools.hex(character.iconColor & 0xff, 2);
+		finalXML.set("color", colorString);
+	}
+
+	for (i in animList) {
+		var animXml:Xml = Xml.createElement('anim');
+		var anim = character.animDatas[i];
+		animXml.set("name", anim.name);
+		animXml.set("anim", anim.anim);
+		animXml.set("loop", Std.string(anim.loop));
+		animXml.set("fps", Std.string(anim.fps));
+		var offset = character.getAnimOffset(anim.name);
+		animXml.set("x", Std.string(offset.x));
+		animXml.set("y", Std.string(offset.y));
+		if (anim.indices.length > 0)
+			animXml.set("indices", anim.indices.join(","));
+		finalXML.addChild(animXml);
+	}
+
+	var finalString:String = StringTools.replace(finalXML.toString(), '><', '>\n<');
 	for (line in finalString.split('\n'))
 		if (StringTools.startsWith(line, '<anim'))
 			finalString = StringTools.replace(finalString, line, '	' + line);
-    new FileReference().save(finalString, currentCharacter + '.xml');
 
-	if (character.isPlayer) character.flipX = !character.flipX;
+	return '<!DOCTYPE codename-engine-character>\n' + finalString;
 }
+
+function save()
+    new FileReference().save(generateXML(), currentCharacter + '.xml');
