@@ -254,7 +254,7 @@ function generateXML() {
 	var finalXML:Xml = Xml.createElement('character');
 
 	finalXML.set("isPlayer", Std.string(character.isPlayer));
-	finalXML.set("flipX", Std.string(character.flipX));
+	finalXML.set("flipX", Std.string(character.isPlayer ? !character.flipX : character.flipX));
 	finalXML.set("holdTime", Std.string(character.holdTime));
 
 	if (character.isGF) finalXML.set("isGF", 'true');
