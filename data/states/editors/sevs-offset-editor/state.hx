@@ -59,11 +59,11 @@ function create() {
 	FlxG.cameras.add(uicam, false);
 
 	var ref = new Character(0, 0, 'dad');
-    ref.cameras = [charcam];
+	ref.cameras = [charcam];
 	ref.screenCenter();
 	ref.color = 0xFF000000;
 	ref.alpha = 0.5;
-    add(ref);
+	add(ref);
 	ref.playAnim('idle', true);
 	ref.animation.paused = true;
 	ref.animation.curAnim.curFrame = 0;
@@ -71,17 +71,17 @@ function create() {
 	character = new Character(0, 0, currentCharacter);
 	character.isPlayer = character.xml.get('isPlayer') == 'true';
 	character.fixChar();
-    character.cameras = [charcam];
+	character.cameras = [charcam];
 	character.screenCenter();
-    add(character);
+	add(character);
 
 	ghostCharacter = new Character(0, 0, currentCharacter);
 	ghostCharacter.isPlayer = ghostCharacter.xml.get('isPlayer') == 'true';
 	ghostCharacter.fixChar();
-    ghostCharacter.cameras = [charcam];
+	ghostCharacter.cameras = [charcam];
 	ghostCharacter.screenCenter();
 	ghostCharacter.alpha = 0.5;
-    insert(members.indexOf(character), ghostCharacter);
+	insert(members.indexOf(character), ghostCharacter);
 
 	if (character.isPlayer) {
 		for (i in [character, ghostCharacter]) {
@@ -174,7 +174,7 @@ function update(elapsed:Float) {
 
 	// CAMERA MOVEMENT
 	if (FlxG.mouse.pressedMiddle || (FlxG.mouse.pressed && FlxG.keys.pressed.SPACE))
-        nextScroll = [nextScroll[0] - (FlxG.mouse.deltaScreenX/charcam.zoom), nextScroll[1] - (FlxG.mouse.deltaScreenY/charcam.zoom)];
+		nextScroll = [nextScroll[0] - (FlxG.mouse.deltaScreenX/charcam.zoom), nextScroll[1] - (FlxG.mouse.deltaScreenY/charcam.zoom)];
 
 	if (FlxG.mouse.wheel != 0 && !characterAnimsWindow.hovered)
 		charcam.zoom += (4 * FlxG.mouse.wheel) * elapsed;
@@ -291,10 +291,10 @@ function generateXML() {
 	var finalString:String = StringTools.replace(finalXML.toString(), '><', '>\n<');
 	for (line in finalString.split('\n'))
 		if (StringTools.startsWith(line, '<anim'))
-			finalString = StringTools.replace(finalString, line, '	' + line);
+			finalString = StringTools.replace(finalString, line, '\t' + line);
 
 	return '<!DOCTYPE codename-engine-character>\n' + finalString;
 }
 
 function save()
-    new FileReference().save(generateXML(), currentCharacter + '.xml');
+	new FileReference().save(generateXML(), currentCharacter + '.xml');
